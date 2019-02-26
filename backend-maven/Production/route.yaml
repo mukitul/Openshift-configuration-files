@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: production-[appname]
+  name: [route name]
+  namespace: [projectname]
+spec:
+  host: [servicename].[projectname].115.127.24.188.nip.io
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: [projectname]
+    weight: 100
+  wildcardPolicy: None

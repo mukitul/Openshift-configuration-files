@@ -1,0 +1,69 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: staging-crm
+  name: staging-crm
+  namespace: ngfs
+spec:
+  replicas: 1
+  selector:
+    app: staging-crm
+    deploymentconfig: staging-crm
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: staging-crm
+        deploymentconfig: staging-crm
+    spec:
+      Containers:
+        - env:
+            - name: MYSQL_DATABASE 
+              value: crmdb
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+          image: 'mysql:5.6'
+          imagePullPolicy: IfNotPresent
+          name: mysqlserver
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-data
+        - image: docker-registry.default.svc:5000/ngfs/staging-crm
+          imagePullPolicy: Always
+          name: staging-crm
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: staging-crmstaging
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - staging-crm
+        from:
+          kind: ImageStreamTag
+          name: 'staging-crm'
+          namespace: ngfs
+      type: ImageChange
+

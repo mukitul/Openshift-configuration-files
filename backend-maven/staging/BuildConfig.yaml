@@ -1,0 +1,26 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    build: staging-crm-build
+  name: staging-crm-build
+  namespace: ngfs
+spec:
+  failedBuildsHistoryLimit:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'crm-staging:latest'
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    type: Binary
+  strategy:
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'openjdk:8-jdk-alpine'
+    type: Docker
+
