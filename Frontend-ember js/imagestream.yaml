@@ -5,3 +5,4 @@ metadata:
     build: frontend
   name: frontend
   namespace: ngfs-core-framework
+
