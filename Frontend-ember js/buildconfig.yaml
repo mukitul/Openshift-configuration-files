@@ -19,8 +19,5 @@ spec:
     type: Binary
   strategy:
     dockerStrategy:
-      from:
-        kind: ImageStreamTag
-        name: 'nginx:stable-alpine'
+      dockerfilePath: Dockerfile
     type: Docker
-
